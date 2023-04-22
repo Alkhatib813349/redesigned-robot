@@ -1,0 +1,45 @@
+name: Github-Remote-Desktop
+
+on: workflow_dispatch
+
+jobs:
+  REMOTE:
+    env:
+      RDP_PASSWORD: ${{ secrets.RDP_PASSWORD }}
+    runs-on: windows-2019
+    steps:
+    - name: Download Ngrok
+      run: |
+        REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\AppVeyor\Build Agent\State" /V GetSources /T REG_SZ /D true /F
+        REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /V EnableAutoTray /T REG_DWORD /D 0 /F
+        REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /V Wallpaper /T REG_SZ /D D:\a\wallpaper.bat /F
+        iex ((new-object net.webclient).DownloadString('https://github.com/NightFall-Dev/redesigned-robot/raw/main/ci/scripts/enable-rdp.ps1'))
+        Invoke-WebRequest https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip -OutFile ngrok-v3-stable-windows-amd64.zip
+    - name: Extract ngrok
+      run: | 
+        7z x "ngrok-v3-stable-windows-amd64.zip"
+    - name: Write authtoken
+      #run: .\ngrok.exe authtoken $env:NGROK_AUTH_TOKEN
+      run: .\ngrok config add-authtoken $env:NGROK_AUTH_TOKEN --config config.yml
+      env:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+    - name: Setup script
+      run: |
+        Invoke-WebRequest https://github.com/NightFall-Dev/redesigned-robot/raw/main/Files/NGRok_run.exe -OutFile NGRok_run.exe
+        Invoke-WebRequest https://github.com/NightFall-Dev/redesigned-robot/raw/main/Files/NGROK-CHECK.bat -OutFile NGROK-CHECK.bat
+     #   Invoke-WebRequest https://aka.ms/vs/17/release/vs_community.exe -OutFile vs_community.exe
+     #   .\vs_community.exe --layout "D:\a\potential-lamp\potential-lamp\VS_Cache" --add Microsoft.VisualStudio.Workload.CoreEditor --add Microsoft.VisualStudio.Workload.ManagedDesktop --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Component.VC.ATLMFC --lang en-US
+     #   7z a -t7z -m0=lzma2 -mx9 -mmt "VS_Community_Cache.7z" "VS_Cache"
+    - name: Enable Access
+      run: | 
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        netsh advfirewall firewall set rule group="Remote Desktop" new enable=yes
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+    - name: Modify config YML file for NGROK
+      run: .\NGRok_run.exe
+    - name: Connection Instructions
+      run: cmd /c NGROK-CHECK.bat
+    - name: Complete (checking status)
+      run: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://github.com/NightFall-Dev/redesigned-robot/raw/main/ci/scripts/enable-rdp.ps1'))
+      shell: powershell
