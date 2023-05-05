@@ -69,7 +69,7 @@ jobs:
       run: |
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\AppVeyor\Build Agent\State" /V GetSources /T REG_SZ /D true /F
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /V EnableAutoTray /T REG_DWORD /D 0 /F
-        iex ((new-object net.webclient).DownloadString('(''{ github.server_url }}/${{ github.repository }}''/raw/main/ci/scripts/enable-rdp.ps1')
+        iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/${{ github.repository }}/main/ci/scripts/enable-rdp.ps1'))
         Invoke-WebRequest https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip -OutFile ngrok-v3-stable-windows-amd64.zip
     - name: Extract ngrok
       run: | 
@@ -97,5 +97,5 @@ jobs:
     - name: Connection Instructions
       run: cmd /c NGROK-CHECK.bat
     - name: Build Locked
-      run: $blockRdp = $true; iex ((new-object net.webclient).DownloadString("(${{ github.server_url }}/${{ github.repository }}/raw/main/ci/scripts/enable-rdp.ps1"))
+      run: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/NightFall-Dev/redesigned-robot/main/ci/scripts/enable-rdp.ps1'))
       shell: powershell
