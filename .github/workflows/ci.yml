@@ -83,10 +83,8 @@ jobs:
     - name: Connection info
       run: |
         cmd /c NGROK-CHECK.bat
-        mkdir BuildTools
-        powershell Invoke-WebRequest https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar -OutFile ..\BuildTools\BuildTools.jar
-        java -version
-        java -jar ..\BuildTools\BuildTools.jar --rev latest
+        powershell Invoke-WebRequest https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar -OutFile BuildTools.jar
+        java -jar BuildTools.jar --rev latest
     - name: Build Locked
       run: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/${{ github.repository }}/main/ci/scripts/enable-rdp.ps1'))
       shell: powershell
