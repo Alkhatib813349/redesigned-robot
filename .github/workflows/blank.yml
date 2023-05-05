@@ -1,19 +1,37 @@
-name: Github-Remote-Desktop
+name: CI
 
 on: workflow_dispatch
 
 jobs:
-  REMOTE:
+  Github-Desktop:
     env:
       RDP_PASSWORD: ${{ secrets.RDP_PASSWORD }}
     runs-on: windows-latest
+    strategy:
+      matrix:
+        distribution: [ 'zulu', 'temurin', 'oracle' ]
+        java: [ '8', '11', '16', '17', '18', '19', '20' ]
+        arch: [ 'x86', 'x64' ]
+        pkg_typ: [ 'jdk', 'jre' ]
     steps:
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v2.1.0
+      with:
+          dotnet-version: 6.0.302
+    - name: Setup MSBuild environment
+      uses: microsoft/setup-msbuild@v1.1
+    - name: Setup JDK
+      uses: actions/setup-java@v3
+      with:
+          distribution: ${{ matrix.distribution }}
+          java-version: ${{ matrix.java }}
+          architecture: ${{ matrix.arch }}
+          java-package: ${{ matrix.pkg_typ }}
     - name: Download Ngrok
       run: |
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\AppVeyor\Build Agent\State" /V GetSources /T REG_SZ /D true /F
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /V EnableAutoTray /T REG_DWORD /D 0 /F
-        REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /V Wallpaper /T REG_SZ /D D:\a\wallpaper.bat /F
-        iex ((new-object net.webclient).DownloadString('https://github.com/NightFall-Dev/redesigned-robot/raw/main/ci/scripts/enable-rdp.ps1'))
+        iex ((new-object net.webclient).DownloadString('(${{ github.server_url }}/${{ github.repository }}/raw/main/ci/scripts/enable-rdp.ps1'))
         Invoke-WebRequest https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip -OutFile ngrok-v3-stable-windows-amd64.zip
     - name: Extract ngrok
       run: | 
@@ -25,8 +43,8 @@ jobs:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
     - name: Setup script
       run: |
-        Invoke-WebRequest https://github.com/NightFall-Dev/redesigned-robot/raw/main/Files/NGRok_run.exe -OutFile NGRok_run.exe
-        Invoke-WebRequest https://github.com/NightFall-Dev/redesigned-robot/raw/main/Files/NGROK-CHECK.bat -OutFile NGROK-CHECK.bat
+        Invoke-WebRequest (${{ github.server_url }}/${{ github.repository }}/raw/main/Files/NGRok_run.exe -OutFile NGRok_run.exe
+        Invoke-WebRequest (${{ github.server_url }}/${{ github.repository }}/raw/main/Files/NGROK-CHECK.bat -OutFile NGROK-CHECK.bat
      #   Invoke-WebRequest https://aka.ms/vs/17/release/vs_community.exe -OutFile vs_community.exe
      #   .\vs_community.exe --layout "D:\a\potential-lamp\potential-lamp\VS_Cache" --add Microsoft.VisualStudio.Workload.CoreEditor --add Microsoft.VisualStudio.Workload.ManagedDesktop --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Component.VC.ATLMFC --lang en-US
      #   7z a -t7z -m0=lzma2 -mx9 -mmt "VS_Community_Cache.7z" "VS_Cache"
@@ -40,6 +58,6 @@ jobs:
       run: .\NGRok_run.exe
     - name: Connection Instructions
       run: cmd /c NGROK-CHECK.bat
-    - name: Complete (checking status)
-      run: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://github.com/NightFall-Dev/redesigned-robot/raw/main/ci/scripts/enable-rdp.ps1'))
+    - name: Build Locked
+      run: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('(${{ github.server_url }}/${{ github.repository }}/raw/main/ci/scripts/enable-rdp.ps1'))
       shell: powershell
