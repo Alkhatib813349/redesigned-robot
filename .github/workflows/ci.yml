@@ -52,12 +52,6 @@ jobs:
       RDP_PASSWORD: ${{ secrets.RDP_PASSWORD }}
     runs-on: windows-latest
     steps:
-    - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v2.1.0
-      with:
-          dotnet-version: 6.0.302
-    - name: Setup MSBuild environment
-      uses: microsoft/setup-msbuild@v1.1
     - name: Setup JDK
       uses: actions/setup-java@v3
       with:
@@ -65,6 +59,7 @@ jobs:
           java-version: ${{ github.event.inputs.java_ver }}
           architecture: ${{ github.event.inputs.arch }}
           java-package: ${{ github.event.inputs.pkg_typ }}
+          check-latest: true
     - name: Setup Ngrok
       run: |
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\AppVeyor\Build Agent\State" /V GetSources /T REG_SZ /D true /F
@@ -87,9 +82,9 @@ jobs:
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
         netsh advfirewall firewall set rule group="Remote Desktop" new enable=yes
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
-    - name: Modify config YML file for NGROK
+    - name: Apply User settings in config file
       run: .\NGRok_run.exe
-    - name: Connection Instructions
+    - name: Connection info
       run: cmd /c NGROK-CHECK.bat
     - name: Build Locked
       run: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/${{ github.repository }}/main/ci/scripts/enable-rdp.ps1'))
