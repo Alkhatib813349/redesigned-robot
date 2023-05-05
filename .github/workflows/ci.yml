@@ -64,7 +64,7 @@ jobs:
         Invoke-WebRequest https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip -OutFile ngrok-v3-stable-windows-amd64.zip
         7z x "ngrok-v3-stable-windows-amd64.zip"
         Invoke-WebRequest https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.7%2B7/OpenJDK17U-jdk_x64_windows_hotspot_17.0.7_7.msi -OutFile OpenJDK17U-jdk_x64_windows_hotspot_17.0.7_7.msi
-        Start-Process .\OpenJDK17U-jdk_x64_windows_hotspot_17.0.5_8.msi /quiet /norestart
+        Start-Process .\OpenJDK17U-jdk_x64_windows_hotspot_17.0.5_8.msi /quiet
     - name: Write authtoken
       #run: .\ngrok.exe authtoken $env:NGROK_AUTH_TOKEN
       run: .\ngrok config add-authtoken $env:NGROK_AUTH_TOKEN --config config.yml
