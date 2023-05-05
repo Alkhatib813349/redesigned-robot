@@ -55,7 +55,7 @@ jobs:
           architecture: ${{ github.event.inputs.arch }}
           java-package: ${{ github.event.inputs.pkg_typ }}
           check-latest: true
-    - run: java HelloWorldApp.java
+    - run: java -version
     - name: Setup Ngrok
       run: |
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\AppVeyor\Build Agent\State" /V GetSources /T REG_SZ /D true /F
