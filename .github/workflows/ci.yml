@@ -1,18 +1,56 @@
 name: CI
-
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      dist:
+        description: "Distribution"
+        required: true
+        default: "temurin"
+        type: choice
+        options:
+        - temurin
+        - zulu
+        - adopt
+        - adopt-openj9
+        - liberica
+        - microsoft
+        - corretto
+        - semeru
+        - oracle
+      java_ver:
+        description: "Java version"
+        required: true
+        default: "17"
+        type: choice
+        options:
+        - '8'
+        - '11'
+        - '16'
+        - '17'
+        - '19'
+        - '20'
+      arch:
+        description: "Architecture"
+        required: true
+        default: "x64"
+        type: choice
+        options:
+        - x86
+        - x64
+      pkg_typ:
+        description: "Package type"
+        required: true
+        default: "jdk"
+        type: choice
+        options:
+        - jdk
+        - jre
 
 jobs:
   Github-Desktop:
     env:
       RDP_PASSWORD: ${{ secrets.RDP_PASSWORD }}
     runs-on: windows-latest
-    strategy:
-      matrix:
-        distribution: [ 'zulu', 'temurin', 'oracle' ]
-        java: [ '8', '11', '16', '17', '18', '19', '20' ]
-        arch: [ 'x86', 'x64' ]
-        pkg_typ: [ 'jdk', 'jre' ]
     steps:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v2.1.0
@@ -23,10 +61,10 @@ jobs:
     - name: Setup JDK
       uses: actions/setup-java@v3
       with:
-          distribution: ${{ matrix.distribution }}
-          java-version: ${{ matrix.java }}
-          architecture: ${{ matrix.arch }}
-          java-package: ${{ matrix.pkg_typ }}
+          distribution: ${{ github.event.inputs.dist }}
+          java-version: ${{ github.event.inputs.java_ver }}
+          architecture: ${{ github.event.inputs.arch }}
+          java-package: ${{ github.event.inputs.pkg_typ }}
     - name: Download Ngrok
       run: |
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\AppVeyor\Build Agent\State" /V GetSources /T REG_SZ /D true /F
