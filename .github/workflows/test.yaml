@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - env:
+        env:
           OUTPUT1: ${{needs.runner.outputs.full_sha_output}}
           OUTPUT2: ${{needs.runner.outputs.short_sha_output}}
           
