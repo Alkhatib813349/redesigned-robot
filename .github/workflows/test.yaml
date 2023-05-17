@@ -11,6 +11,10 @@ jobs:
       full_sha_output: ${{ steps.var_a.outputs.full_sha }}
       short_sha_output: ${{ steps.var_b.outputs.short_sha }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - id: var_a
         run: echo "full_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
       - id: var_b
