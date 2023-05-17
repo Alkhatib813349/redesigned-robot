@@ -24,7 +24,12 @@ jobs:
           OUTPUT2: ${{needs.runner.outputs.short_sha_output}}
         run: |
           echo "$OUTPUT1 $OUTPUT2"
-          "v20.11 - Back from the Dead [${{ needs.runner.outputs.short_sha }}]"
-          "v20.11 - Back from the Dead [${{ needs.runner.outputs.full_sha }}]"
+          echo $OUTPUT1 $OUTPUT2
+          echo "v20.11 - Back from the Dead [${{ needs.runner.outputs.short_sha }}]"
+          echo v20.11 - Back from the Dead [${{ needs.runner.outputs.short_sha }}]
+          echo "v20.11 - Back from the Dead [${{ needs.runner.outputs.full_sha }}]"
+          echo v20.11 - Back from the Dead [${{ needs.runner.outputs.full_sha }}]
           echo "${{ needs.runner.outputs.short_sha }}"
+          echo ${{ needs.runner.outputs.short_sha }}
           echo "${{ needs.runner.outputs.full_sha }}"
+          echo ${{ needs.runner.outputs.full_sha }}
