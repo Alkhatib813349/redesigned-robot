@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: runner
     steps:
+      - run: ls -al
+          
       - env:
           OUTPUT1: ${{needs.runner.outputs.full_sha_output}}
           OUTPUT2: ${{needs.runner.outputs.short_sha_output}}
