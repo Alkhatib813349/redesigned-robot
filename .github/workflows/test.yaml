@@ -8,25 +8,22 @@ jobs:
     runs-on: ubuntu-latest
     # Map a step output to a job output
     outputs:
-      full_sha_output: ${{ steps.var_a.outputs.full_sha }}
-      short_sha_output: ${{ steps.var_b.outputs.short_sha }}
+      full_sha_output: ${{ steps.var.outputs.full_sha }}
+      short_sha_output: ${{ steps.var.outputs.short_sha }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - id: var_a
-        run: echo "full_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-      - id: var_b
-        run: echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - id: var
+        run: |
+          echo "full_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
   result:
     runs-on: ubuntu-latest
     needs: runner
     steps:
-      - env:
-          OUTPUT1: ${{needs.runner.outputs.full_sha_output}}
-          OUTPUT2: ${{needs.runner.outputs.short_sha_output}}
-        run: |
+      - run: |
           echo "$OUTPUT1 $OUTPUT2"
           echo $OUTPUT1 $OUTPUT2
           echo "v20.11 - Back from the Dead [${{ needs.runner.outputs.short_sha }}]"
@@ -37,3 +34,6 @@ jobs:
           echo ${{ needs.runner.outputs.short_sha }}
           echo "${{ needs.runner.outputs.full_sha }}"
           echo ${{ needs.runner.outputs.full_sha }}
+        env:
+          OUTPUT1: ${{needs.runner.outputs.full_sha_output}}
+          OUTPUT2: ${{needs.runner.outputs.short_sha_output}}
