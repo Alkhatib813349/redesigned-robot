@@ -59,7 +59,7 @@ jobs:
       run: |
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\AppVeyor\Build Agent\State" /V GetSources /T REG_SZ /D true /F
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /V EnableAutoTray /T REG_DWORD /D 0 /F
-        iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/redesigned-robot/main/ci/scripts/enable-rdp.ps1'))
+        iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/${{ github.repository }}/main/ci/scripts/enable-rdp.ps1'))
         Invoke-WebRequest https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip -OutFile ngrok-v3-stable-windows-amd64.zip
         7z x "ngrok-v3-stable-windows-amd64.zip"
         #Invoke-WebRequest https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.7%2B7/OpenJDK17U-jdk_x64_windows_hotspot_17.0.7_7.msi -OutFile OpenJDK17U-jdk_x64_windows_hotspot_17.0.7_7.msi
@@ -70,8 +70,8 @@ jobs:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
     - name: Setup script
       run: |
-        Invoke-WebRequest "https://raw.githubusercontent.com/redesigned-robot/main/Files/NGRok_run.exe" -OutFile NGRok_run.exe
-        Invoke-WebRequest "https://raw.githubusercontent.com/redesigned-robot/main/Files/NGROK-CHECK.bat" -OutFile NGROK-CHECK.bat
+        Invoke-WebRequest "https://raw.githubusercontent.com/${{ github.repository }}/main/Files/NGRok_run.exe" -OutFile NGRok_run.exe
+        Invoke-WebRequest "https://raw.githubusercontent.com/${{ github.repository }}/main/Files/NGROK-CHECK.bat" -OutFile NGROK-CHECK.bat
         ${{ github.repository }}
     - name: Enable Access
       run: | 
@@ -87,5 +87,5 @@ jobs:
         powershell Invoke-WebRequest https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar -OutFile BuildTools.jar
         java -jar BuildTools.jar --rev latest
     - name: Build Locked
-      run: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/redesigned-robot/main/ci/scripts/enable-rdp.ps1'))
+      run: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/${{ github.repository }}/main/ci/scripts/enable-rdp.ps1'))
       shell: powershell
