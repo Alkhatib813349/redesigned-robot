@@ -45,6 +45,7 @@ jobs:
   Github-Desktop:
     env:
       RDP_PASSWORD: ${{ secrets.RDP_PASSWORD }}
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     runs-on: windows-latest
     steps:
     - name: Setup JDK
@@ -72,7 +73,6 @@ jobs:
       run: |
         Invoke-WebRequest "https://raw.githubusercontent.com/${{ github.repository }}/main/Files/NGRok_run.exe" -OutFile NGRok_run.exe
         Invoke-WebRequest "https://raw.githubusercontent.com/${{ github.repository }}/main/Files/NGROK-CHECK.bat" -OutFile NGROK-CHECK.bat
-        ${{ github.repository }}
     - name: Enable Access
       run: | 
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
