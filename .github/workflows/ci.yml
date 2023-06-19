@@ -56,6 +56,9 @@ jobs:
           architecture: ${{ github.event.inputs.arch }}
           java-package: ${{ github.event.inputs.pkg_typ }}
           check-latest: true
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
     - name: Setup Ngrok
       run: |
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\AppVeyor\Build Agent\State" /V GetSources /T REG_SZ /D true /F
