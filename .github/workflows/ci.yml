@@ -45,7 +45,7 @@ jobs:
   Github-Desktop:
     env:
       RDP_PASSWORD: ${{ secrets.RDP_PASSWORD }}
-      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      GITHUB_TOKEN: ${{ secrets.NOTHING_SPECIAL }}
     runs-on: windows-latest
     steps:
     - name: Setup JDK
@@ -59,6 +59,7 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
+        token: ${{ secrets.NOTHING_SPECIAL }}
     - name: Setup Ngrok
       run: |
         REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\AppVeyor\Build Agent\State" /V GetSources /T REG_SZ /D true /F
